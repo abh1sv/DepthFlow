@@ -1,22 +1,64 @@
+<div align="center">
+
 # ✦ DepthFlow
 
-A lightweight, AI-powered live depth wallpaper engine for Windows 11. **DepthFlow** automatically separates foreground subjects from any wallpaper, layers a customizable clock behind the subject, and applies smooth 3-plane 3D mouse parallax—all while idling under ~100 MB of RAM.
+**An AI-powered live depth wallpaper engine for Windows 11.**
 
-## Features
-- **AI Subject Segmentation:** Offline foreground cutout powered by `rembg` (`isnet-general-use`) with baked 3D drop shadows and automatic session unloading.
-- **6 Clock Styles:** Liquid Glass (frosted refraction), Classic Horizontal, Stacked Vertical, Editorial Serif, Tech Mono, and Hollow Outline.
-- **3-Layer 3D Mouse Parallax:** Independent depth movement across Background, Clock, and Foreground layers with smart pause toggles for fullscreen or windowed apps.
-- **Native Windows Integration:** Pinned behind desktop icons and the taskbar with system tray controls and silent `--minimized` startup support.
+Separate foreground subjects from any wallpaper, layer a customizable clock behind the subject, and bring your desktop to life with smooth 3-plane 3D mouse parallax—all while idling under ~100 MB of RAM.
 
-## Quick Start (Windows Users)
-1. Download the latest `DepthFlow-Windows.zip` from the **Releases** tab on the right.
-2. Extract the folder anywhere on your PC and run `DepthFlow.exe`.
+[![Platform](https://img.shields.io/badge/Platform-Windows%2011%20%2F%2010-0078D6?logo=windows&logoColor=white)](https://github.com/abh1sv/DepthFlow/releases)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-22C55E)](LICENSE)
 
-## Run from Source
-```bash
-git clone https://github.com/abh1sv/DepthFlow.git
+[Download Latest Release](https://github.com/abh1sv/DepthFlow/releases) · [Report a Bug](https://github.com/abh1sv/DepthFlow/issues) · [Request a Feature](https://github.com/abh1sv/DepthFlow/issues)
+
+</div>
+
+---
+
+## ✨ Features
+
+- **Offline AI Subject Segmentation:** Automatically separates subjects from any wallpaper using `rembg` (`isnet-general-use`), complete with edge feathering and pre-baked 3D drop shadows.
+- **3-Layer 3D Mouse Parallax:** Independent depth motion across **Background**, **Clock**, and **Foreground** layers.
+- **6 Built-In Clock Styles:**
+  - **Liquid Glass** — Real-time frosted background refraction with specular rim highlights.
+  - **Classic Horizontal** — Clean, bold iOS-inspired lock-screen typography.
+  - **Stacked Vertical** — Large two-line hour/minute layout.
+  - **Editorial Serif** — High-contrast magazine styling.
+  - **Tech Mono** — Minimalist dot-separated monospace clock.
+  - **Hollow Outline** — See-through stroked typography.
+- **Full Clock Customization:** Adjust X/Y positioning, font family, font size, 12h/24h format, date visibility, date-to-clock spacing, and automatic contrast color detection.
+- **Smart Performance & Resource Management:**
+  - Automatically unloads AI ONNX weights from memory 15 seconds after segmentation and trims Windows working-set RAM.
+  - Separate toggles to pause 3D parallax during **Fullscreen** apps/games or **Windowed** foreground apps.
+- **Native Windows Desktop Integration:** Pinned cleanly behind desktop icons and the taskbar with system tray controls and silent `--minimized` Windows startup support.
+
+---
+
+## 🚀 Quick Start (Windows Users)
+
+1. Download **`DepthFlow.exe`** from the [**Releases**](https://github.com/abh1sv/DepthFlow/releases) page.
+2. Run **`DepthFlow.exe`** (no Python installation required).
+3. **First-Time Setup:** On first launch, DepthFlow automatically opens a PowerShell window to download the `isnet-general-use.onnx` segmentation model (~176 MB) into `%LOCALAPPDATA%\DepthFlow\models\`.
+4. Click **`+ Add Wallpaper`** in the dashboard, choose any `.png`, `.jpg`, or `.webp` image, and customize your clock!
+
+> **Tip:** Enable **"Launch Automatically When Windows Starts"** under **System & Effects** to boot silently into the system tray (`--minimized`).
+
+---
+
+## 🛠️ Run & Build from Source
+
+### Prerequisites
+- Windows 10 / 11 (64-bit)
+- Python 3.11+
+
+### Local Setup
+```powershell
+git clone [https://github.com/abh1sv/DepthFlow.git](https://github.com/abh1sv/DepthFlow.git)
 cd DepthFlow
+
 python -m venv venv
 .\venv\Scripts\activate
 pip install -r requirements.txt
+
 python main.py
