@@ -8,7 +8,6 @@ Separate foreground subjects from any wallpaper, layer a customizable clock behi
 
 [![Platform](https://img.shields.io/badge/Platform-Windows%2011%20%2F%2010-0078D6?logo=windows&logoColor=white)](https://github.com/abh1sv/DepthFlow/releases)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-22C55E)](LICENSE)
 
 [Download Latest Release](https://github.com/abh1sv/DepthFlow/releases) · [Report a Bug](https://github.com/abh1sv/DepthFlow/issues) · [Request a Feature](https://github.com/abh1sv/DepthFlow/issues)
 
