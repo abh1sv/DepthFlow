@@ -3,7 +3,9 @@ import os
 import gc  # Added missing gc import
 
 BASE_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
-os.chdir(BASE_DIR)  # Ensures config.json and assets/ always resolve next to DepthFlow.exe
+DATA_DIR = os.path.join(os.environ.get("LOCALAPPDATA", BASE_DIR), "DepthFlow") if getattr(sys, "frozen", False) else BASE_DIR
+os.makedirs(DATA_DIR, exist_ok=True)
+os.chdir(DATA_DIR)  # Stores config.json and assets/ safely in %LOCALAPPDATA%\DepthFlow
 
 import json
 import ctypes
@@ -443,8 +445,8 @@ class AppController:
         self.dashboard.preset_selected.connect(self.apply_preset)
         self.dashboard.startup_toggled.connect(set_windows_startup)
 
-        # Loading the .ico application branding directly
-        icon_path = os.path.join(BASE_DIR, "app.ico")
+        bundle_dir = getattr(sys, "_MEIPASS", BASE_DIR)
+        icon_path = os.path.join(bundle_dir, "app.ico")
         if os.path.exists(icon_path):
             app_icon = QIcon(icon_path)
         else:
@@ -498,8 +500,13 @@ class AppController:
             phys_w, phys_h = right - left, bottom - top
             model = self.win.config.get("ai_model", "isnet-general-use")
 
-            self.dashboard.set_processing_status("⏳ Separating subject with AI...")
-            self.tray.showMessage("DepthFlow", "Separating subject from background...")
+            model_file = os.path.join(os.environ.get("U2NET_HOME", ""), f"{model}.onnx")
+            if not os.path.exists(model_file):
+                self.dashboard.set_processing_status("⏳ First-time setup: downloading AI model (~176 MB)...")
+                self.tray.showMessage("DepthFlow", "Downloading AI model (one-time setup)...")
+            else:
+                self.dashboard.set_processing_status("⏳ Separating subject with AI...")
+                self.tray.showMessage("DepthFlow", "Separating subject from background...")
 
             self.worker = SegmentationWorker(file_path, phys_w, phys_h, model)
             self.worker.finished.connect(self.on_processed)

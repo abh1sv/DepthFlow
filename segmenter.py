@@ -6,9 +6,9 @@ import uuid
 import ctypes
 import threading
 
-# Force rembg to load bundled offline ONNX models next to the .exe / script
 BASE_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
-LOCAL_MODELS_DIR = os.path.join(BASE_DIR, "models")
+DATA_DIR = os.path.join(os.environ.get("LOCALAPPDATA", BASE_DIR), "DepthFlow") if getattr(sys, "frozen", False) else BASE_DIR
+LOCAL_MODELS_DIR = os.path.join(DATA_DIR, "models")
 os.makedirs(LOCAL_MODELS_DIR, exist_ok=True)
 os.environ["U2NET_HOME"] = LOCAL_MODELS_DIR
 
