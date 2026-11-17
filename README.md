@@ -15,6 +15,14 @@ Separate foreground subjects from any wallpaper, layer a customizable clock behi
 
 ---
 
+## 📸 Preview
+
+<div align="center">
+  <img src="docs/screenshots/desktop-preview.png" alt="DepthFlow Desktop Parallax Wallpaper" width="85%" />
+  <br /><br />
+  <img src="docs/screenshots/dashboard-preview.png" alt="DepthFlow Dashboard UI" width="85%" />
+</div>
+
 ## ✨ Features
 
 - **Offline AI Subject Segmentation:** Automatically separates subjects from any wallpaper using `rembg` (`isnet-general-use`), complete with edge feathering and pre-baked 3D drop shadows.
