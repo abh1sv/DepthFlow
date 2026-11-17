@@ -14,7 +14,7 @@ A lightweight, AI-powered live depth wallpaper engine for Windows 11. **DepthFlo
 
 ## Run from Source
 ```bash
-git clone [https://github.com/](https://github.com/)abh1sv/DepthFlow.git
+git clone https://github.com/abh1sv/DepthFlow.git
 cd DepthFlow
 python -m venv venv
 .\venv\Scripts\activate
