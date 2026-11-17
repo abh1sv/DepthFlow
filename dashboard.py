@@ -189,11 +189,11 @@ class LivelyDashboard(QWidget):
         title.setObjectName("AppTitle")
         side_layout.addWidget(title)
 
-        add_btn = QPushButton("+  Add Wallpaper")
-        add_btn.setObjectName("PrimaryBtn")
-        add_btn.setCursor(Qt.PointingHandCursor)
-        add_btn.clicked.connect(self.add_wallpaper_requested.emit)
-        side_layout.addWidget(add_btn)
+        self.add_btn = QPushButton("+  Add Wallpaper")
+        self.add_btn.setObjectName("PrimaryBtn")
+        self.add_btn.setCursor(Qt.PointingHandCursor)
+        self.add_btn.clicked.connect(self.add_wallpaper_requested.emit)
+        side_layout.addWidget(self.add_btn)
 
         side_layout.addSpacing(12)
 
@@ -311,6 +311,9 @@ class LivelyDashboard(QWidget):
 
     def set_processing_status(self, text: str):
         self.loading_lbl.setText(text)
+        is_busy = bool(text)
+        self.add_btn.setEnabled(not is_busy)
+        self.add_btn.setText("⏳ Processing..." if is_busy else "+  Add Wallpaper")
 
     def _on_preset_style_picked(self):
         preset = self.style_combo.currentData()

@@ -24,3 +24,4 @@ models/*.onnx
 # Temporary files
 icon_temp.png
 .vscode/
+release/

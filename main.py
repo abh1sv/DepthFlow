@@ -1,6 +1,7 @@
 import sys
 import os
-import gc  # Added missing gc import
+import gc
+import subprocess
 
 BASE_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(os.environ.get("LOCALAPPDATA", BASE_DIR), "DepthFlow") if getattr(sys, "frozen", False) else BASE_DIR
@@ -121,6 +122,53 @@ def attach_overlay_to_desktop(hwnd: int, width: int, height: int):
         win32con.SWP_NOACTIVATE | win32con.SWP_SHOWWINDOW
     )
 
+MODEL_URLS = {
+    "isnet-general-use": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/isnet-general-use.onnx",
+    "birefnet-general": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/BiRefNet-general-epoch_244.onnx",
+    "u2netp": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2netp.onnx",
+}
+
+
+def ensure_model_via_powershell(model_name: str = "isnet-general-use") -> bool:
+    """Opens a visible PowerShell window with a native progress bar to download the AI model once."""
+    models_dir = os.path.join(DATA_DIR, "models")
+    os.makedirs(models_dir, exist_ok=True)
+    dest = os.path.join(models_dir, f"{model_name}.onnx")
+
+    # Skip if valid model file (> 1 MB) already exists
+    if os.path.exists(dest) and os.path.getsize(dest) > 1_000_000:
+        return True
+
+    part_file = dest + ".part"
+    url = MODEL_URLS.get(model_name, MODEL_URLS["isnet-general-use"])
+
+    ps_script = (
+        f"$Host.UI.RawUI.WindowTitle = 'DepthFlow — First-Time AI Model Setup'; "
+        f"$ProgressPreference = 'Continue'; "
+        f"Write-Host '============================================================' -ForegroundColor DarkCyan; "
+        f"Write-Host ' DepthFlow First-Time Setup' -ForegroundColor Cyan; "
+        f"Write-Host ' Downloading AI segmentation model (~176 MB)...' -ForegroundColor White; "
+        f"Write-Host ' This happens only once. Please keep this window open.' -ForegroundColor Gray; "
+        f"Write-Host '============================================================`n' -ForegroundColor DarkCyan; "
+        f"try {{ "
+        f"  Invoke-WebRequest -Uri '{url}' -OutFile '{part_file}' -UseBasicParsing; "
+        f"  Move-Item -Path '{part_file}' -Destination '{dest}' -Force; "
+        f"  Write-Host '`nDownload complete! Starting DepthFlow...' -ForegroundColor Green; "
+        f"  Start-Sleep -Seconds 2; "
+        f"  exit 0; "
+        f"}} catch {{ "
+        f"  if (Test-Path '{part_file}') {{ Remove-Item '{part_file}' -Force }}; "
+        f"  Write-Host '`nDownload failed. Check your internet connection and try again.' -ForegroundColor Red; "
+        f"  Read-Host 'Press Enter to close'; "
+        f"  exit 1; "
+        f"}}"
+    )
+
+    result = subprocess.run(
+        ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", ps_script],
+        creationflags=subprocess.CREATE_NEW_CONSOLE
+    )
+    return result.returncode == 0 and os.path.exists(dest)
 
 def get_foreground_window_state(screen_w: int, screen_h: int) -> str:
     """Returns 'desktop', 'windowed', or 'fullscreen' for the active foreground app."""
@@ -439,6 +487,7 @@ class DepthWallpaperWindow(QWidget):
 class AppController:
     def __init__(self, wallpaper_win: DepthWallpaperWindow):
         self.win = wallpaper_win
+        self.worker = None
         self.dashboard = LivelyDashboard(self.win.config)
         self.dashboard.settings_changed.connect(self.win.apply_config)
         self.dashboard.add_wallpaper_requested.connect(self.pick_image)
@@ -491,28 +540,40 @@ class AppController:
         self.dashboard.activateWindow()
 
     def pick_image(self):
+        # Prevent crash if user clicks "+ Add Wallpaper" while AI is still processing
+        if self.worker is not None and self.worker.isRunning():
+            return
+
         file_path, _ = QFileDialog.getOpenFileName(
             self.dashboard, "Select Wallpaper", "", "Images (*.png *.jpg *.jpeg *.webp)"
         )
         if file_path:
+            model = self.win.config.get("ai_model", "isnet-general-use")
+            model_file = os.path.join(DATA_DIR, "models", f"{model}.onnx")
+
+            if not (os.path.exists(model_file) and os.path.getsize(model_file) > 1_000_000):
+                self.tray.showMessage(
+                    "DepthFlow Setup",
+                    "AI model missing. Downloading via PowerShell..."
+                )
+                QApplication.processEvents()
+                if not ensure_model_via_powershell(model):
+                    self.dashboard.set_processing_status("")
+                    return
+
             progman = win32gui.FindWindow("Progman", None)
             left, top, right, bottom = win32gui.GetWindowRect(progman)
             phys_w, phys_h = right - left, bottom - top
-            model = self.win.config.get("ai_model", "isnet-general-use")
 
-            model_file = os.path.join(os.environ.get("U2NET_HOME", ""), f"{model}.onnx")
-            if not os.path.exists(model_file):
-                self.dashboard.set_processing_status("⏳ First-time setup: downloading AI model (~176 MB)...")
-                self.tray.showMessage("DepthFlow", "Downloading AI model (one-time setup)...")
-            else:
-                self.dashboard.set_processing_status("⏳ Separating subject with AI...")
-                self.tray.showMessage("DepthFlow", "Separating subject from background...")
+            self.dashboard.set_processing_status("⏳ Separating subject with AI (first run takes ~5s)...")
+            self.tray.showMessage("DepthFlow", "Separating subject from background...")
 
             self.worker = SegmentationWorker(file_path, phys_w, phys_h, model)
             self.worker.finished.connect(self.on_processed)
             self.worker.start()
 
     def on_processed(self, meta: dict):
+        self.worker = None
         self.dashboard.set_processing_status("")
         self.apply_preset(meta)
         self.dashboard.refresh_library()
@@ -541,9 +602,23 @@ if __name__ == "__main__":
 
     controller = AppController(window)
 
+    def _check_first_run_model():
+        model_name = cfg.get("ai_model", "isnet-general-use")
+        model_path = os.path.join(DATA_DIR, "models", f"{model_name}.onnx")
+        if not (os.path.exists(model_path) and os.path.getsize(model_path) > 1_000_000):
+            controller.tray.showMessage(
+                "DepthFlow First-Time Setup",
+                "Downloading AI segmentation model (~176 MB) via PowerShell..."
+            )
+            controller.dashboard.set_processing_status("⏳ Downloading AI model in PowerShell...")
+            QApplication.processEvents()
+            ensure_model_via_powershell(model_name)
+            controller.dashboard.set_processing_status("")
+
     # Stay silent in the system tray when launched via Windows Startup (--minimized)
     if "--minimized" not in sys.argv:
         controller.show_dashboard()
+        QTimer.singleShot(400, _check_first_run_model)
     else:
         ctypes.windll.psapi.EmptyWorkingSet(ctypes.windll.kernel32.GetCurrentProcess())
 
