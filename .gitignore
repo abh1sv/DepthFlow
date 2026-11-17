@@ -1,0 +1,26 @@
+# Virtual environments
+venv/
+.venv/
+env/
+
+# PyInstaller build outputs & specs
+build/
+dist/
+*.spec
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local user data & generated presets
+config.json
+assets/presets/
+assets/bg.png
+assets/fg.png
+
+# Large AI model weights (downloaded automatically on first run or bundled in Release ZIP)
+models/*.onnx
+
+# Temporary files
+icon_temp.png
+.vscode/
