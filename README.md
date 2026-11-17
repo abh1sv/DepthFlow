@@ -62,3 +62,28 @@ python -m venv venv
 pip install -r requirements.txt
 
 python main.py
+```
+
+### Build Standalone `.exe`
+```powershell
+.\venv\Scripts\pyinstaller --noconsole --onefile --clean --noconfirm --name "DepthFlow" --icon="app.ico" --add-data "app.ico;." --collect-all rembg --collect-all onnxruntime --collect-all pymatting --collect-data scipy main.py
+```
+The compiled executable will be generated at `dist\DepthFlow.exe`.
+
+---
+
+## 📂 Data & Storage Locations
+
+DepthFlow keeps your installation folder clean by storing all user data in `%LOCALAPPDATA%\DepthFlow\`:
+- `config.json` — Your clock layout, color, and parallax preferences.
+- `assets/presets/` — Processed foreground cutouts, backgrounds, and thumbnails.
+- `models/` — Cached ONNX AI model weights.
+
+---
+
+## 🧩 Built With
+
+- **[PySide6](https://doc.qt.io/qtforpython-6/)** — Hardware-accelerated translucent desktop overlay & dark dashboard UI
+- **[rembg](https://github.com/danielgatis/rembg) & [ONNX Runtime](https://onnxruntime.ai/)** — Local AI foreground extraction
+- **[Pillow](https://python-pillow.org/)** — Image fitting, Gaussian frosted refraction, and pre-baked drop shadows
+- **[pywin32](https://github.com/mhammond/pywin32)** — Desktop Z-order pinning (`HWND_BOTTOM`), foreground window detection, and startup registry integration
