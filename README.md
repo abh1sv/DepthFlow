@@ -102,3 +102,4 @@ DepthFlow keeps your installation folder clean by storing all user data in `%LOC
 - **[rembg](https://github.com/danielgatis/rembg) & [ONNX Runtime](https://onnxruntime.ai/)** — Local AI foreground extraction
 - **[Pillow](https://python-pillow.org/)** — Image fitting, Gaussian frosted refraction, and pre-baked drop shadows
 - **[pywin32](https://github.com/mhammond/pywin32)** — Desktop Z-order pinning (`HWND_BOTTOM`), foreground window detection, and startup registry integration
+- - **Development:** Co-architected, optimized, and packaged alongside **[Google Gemini](https://gemini.google.com/)**.
