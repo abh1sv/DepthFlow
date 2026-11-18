@@ -59,7 +59,6 @@ Separate foreground subjects from any wallpaper, layer a customizable clock behi
 | **Memory (RAM)** | 4 GB RAM *(app idles under ~100 MB; peaks briefly during segmentation)* | 8 GB RAM or more |
 | **Graphics** | DirectX 11 compatible GPU with WDDM 2.0+ drivers (for translucent desktop overlay) | Dedicated or modern integrated GPU (Intel Iris Xe / AMD Radeon / NVIDIA) |
 | **Storage** | ~500 MB free space *(app files + ~176 MB AI model cache)* | 1 GB+ free SSD space |
-| **Internet** | Required **once** on first launch to download the AI model (~176 MB) | Offline after initial setup |
 
 ---
 
