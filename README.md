@@ -50,6 +50,19 @@ Separate foreground subjects from any wallpaper, layer a customizable clock behi
 
 ---
 
+## 💻 System Requirements
+
+| Component | Minimum | Recommended |
+| :--- | :--- | :--- |
+| **OS** | Windows 10 (64-bit, version 1903+) | Windows 11 (64-bit) |
+| **Processor** | Dual-core x64 CPU (Intel Core i3 / AMD Ryzen 3 or newer) | Quad-core x64 CPU (faster AI subject segmentation) |
+| **Memory (RAM)** | 4 GB RAM *(app idles under ~100 MB; peaks briefly during segmentation)* | 8 GB RAM or more |
+| **Graphics** | DirectX 11 compatible GPU with WDDM 2.0+ drivers (for translucent desktop overlay) | Dedicated or modern integrated GPU (Intel Iris Xe / AMD Radeon / NVIDIA) |
+| **Storage** | ~500 MB free space *(app files + ~176 MB AI model cache)* | 1 GB+ free SSD space |
+| **Internet** | Required **once** on first launch to download the AI model (~176 MB) | Offline after initial setup |
+
+---
+
 ## 🚀 Quick Start (Windows Users)
 
 1. Download **`DepthFlow.exe`** from the [**Releases**](https://github.com/abh1sv/DepthFlow/releases) page.
