@@ -6,6 +6,8 @@
 
 Separate foreground subjects from any wallpaper, layer a customizable clock behind the subject, and bring your desktop to life with smooth 3-plane 3D mouse parallax—all while idling under ~100 MB of RAM.
 
+[![Built with Gemini](https://img.shields.io/badge/Built%20with-Google%20Gemini-8E75B2?logo=googlegemini&logoColor=white)](https://gemini.google.com/)
+
 [![Platform](https://img.shields.io/badge/Platform-Windows%2011%20%2F%2010-0078D6?logo=windows&logoColor=white)](https://github.com/abh1sv/DepthFlow/releases)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
