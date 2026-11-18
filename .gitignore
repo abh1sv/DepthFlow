@@ -25,3 +25,7 @@ models/*.onnx
 icon_temp.png
 .vscode/
 release/
+
+# Release archives
+*.zip
+release_pkg/
